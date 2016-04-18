@@ -127,6 +127,14 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 //用户注册时用
 - (void)anonymousConnect
 {
+    /*
+     *(1) 带内注册指的是未在你的服务器上开通账号的用户可以通过xmpp协议注册新账号。相反的概念是带外注册（out-of-band registration），
+          例如,你必须到某个指定的web页面进行注册。
+          如果服务器允许带内注册，那么我们就可以通过自己开发的客户端注册新账号。与带内注册相关的协议是XEP-0077。
+     *(2) XMPPStream.h中声明了进行简单带内注册(提供用户名和密码进行注册)的函数
+          - (BOOL)registerWithPassword:(NSString *)password error:(NSError **)errPtr;
+          注册前需要先建立stream连接, 因为没有帐号,所以需要建立匿名连接
+     */
     isanonymousConnect = YES;
     [self setupStream];
     NSString *jidString = [[NSString alloc] initWithFormat:@"anonymous@%@",XMPP_HOST_NAME];
@@ -151,6 +159,14 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 }
 
 - (void)queryRoster {
+    /*
+     * 获取 roster 需要客户端发送 <iq /> 标签向 XMPP 服务器端查询
+     * type 属性，说明了该 iq 的类型为 get，与 HTTP 类似，向服务器端请求信息
+     * from 属性，消息来源，这里是你的 JID
+     * to 属性，消息目标，这里是服务器域名
+     * id 属性，标记该请求 ID，当服务器处理完毕请求 get 类型的 iq 后，响应的 result 类型 iq 的 ID 与 请求 iq 的 ID 相同
+     <query xmlns="jabber:iq:roster"/> 子标签，说明了客户端需要查询 roster
+     */
     NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:roster"];
     NSXMLElement *iq = [NSXMLElement elementWithName:@"iq"];
     XMPPJID *myJID = _xmppStream.myJID;
