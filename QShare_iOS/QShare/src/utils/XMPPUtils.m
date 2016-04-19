@@ -29,7 +29,6 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 }
 
 -(void)setupStream{
-    
     //初始化XMPPStream
     _xmppStream = [[XMPPStream alloc] init];
     [_xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -64,8 +63,6 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     _xmppMUC = [[XMPPMUC alloc]initWithDispatchQueue:dispatch_get_main_queue()];
     [_xmppMUC activate:_xmppStream];
     [_xmppMUC addDelegate:self delegateQueue:dispatch_get_main_queue()];
-
-
 }
 
 -(void)goOnline{
@@ -125,8 +122,7 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 }
 
 //用户注册时用
-- (void)anonymousConnect
-{
+- (void)anonymousConnect{
     /*
      *(1) 带内注册指的是未在你的服务器上开通账号的用户可以通过xmpp协议注册新账号。相反的概念是带外注册（out-of-band registration），
           例如,你必须到某个指定的web页面进行注册。
@@ -249,8 +245,6 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     {
         [_connectDelegate anonymousConnected];
     }
-    
-    
 }
 
 //验证通过
@@ -303,12 +297,14 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     
     XMPPJID *chatJID;
 
+    //好友聊天
     if ([message isChatMessage]) {
         [dict setObject:from forKey:@"chatwith"];
         [dict setObject:@(NO) forKey:@"isOutgoing"];
         chatJID = fromJID;
     }
     else if ([[[message attributeForName:@"type"] stringValue] isEqualToString:@"groupchat"]){
+        //群主聊天
         [dict setObject:@"groupchat" forKey:@"chatType"];
         [dict setObject:[fromJID resource] forKey:@"from"];
         [dict setObject:[fromJID bare] forKey:@"roomJID"];
@@ -324,11 +320,8 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
         [dict setObject:avatarData forKey:@"chatWithAvatar"];
     }
     
-    
     [_messageDelegate newMessageReceived:dict];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_CHAT_MSG object:dict];
-
 }
 
 //收到好友状态,参照微信不设置在线状态
@@ -414,11 +407,12 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     NSString *myString = [_xmppStream.myJID user];
     NSString *groupInviteDefault = [NSString stringWithFormat:@"%@_groupInvite",myString];
     
-    NSString *roomName = [roomJID user];
+    NSString *roomName = [roomJID user];                                        //房间名
     
+    //<x xmlns="http://jabber.org/protocol/muc#user"><invite from="qw1@121.199.23.184"><reason>欢迎加入！</reason></invite></x>
     NSXMLElement *x = [message elementForName:@"x" xmlns:XMPPMUCUserNamespace];
-	NSXMLElement *inviteElement = [x elementForName:@"invite"];
-    NSXMLElement *reasonElement = [inviteElement elementForName:@"reason"];
+	NSXMLElement *inviteElement = [x elementForName:@"invite"];                 //邀请人
+    NSXMLElement *reasonElement = [inviteElement elementForName:@"reason"];     //欢迎加入!
     
     NSString *whoInvite = [inviteElement attributeStringValueForName:@"from"];
     NSString *inviteMessage = [reasonElement stringValue];
