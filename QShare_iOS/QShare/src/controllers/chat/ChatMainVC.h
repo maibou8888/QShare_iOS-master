@@ -11,5 +11,4 @@
 
 @interface ChatMainVC : UITableViewController
 
-
 @end

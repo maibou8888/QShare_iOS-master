@@ -42,7 +42,7 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     _xmppRoster = [[XMPPRoster alloc]initWithRosterStorage:_xmppRosterDataStorage];
     [_xmppRoster activate:_xmppStream];
     [_xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
-    _xmppRoster.autoFetchRoster = NO;
+    _xmppRoster.autoFetchRoster = YES;
     _xmppRoster.autoAcceptKnownPresenceSubscriptionRequests = YES;
 
     // 初始化 message
@@ -156,13 +156,22 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 
 - (void)queryRoster {
     /*
-     * 获取 roster 需要客户端发送 <iq /> 标签向 XMPP 服务器端查询
-     * type 属性，说明了该 iq 的类型为 get，与 HTTP 类似，向服务器端请求信息
-     * from 属性，消息来源，这里是你的 JID
-     * to 属性，消息目标，这里是服务器域名
-     * id 属性，标记该请求 ID，当服务器处理完毕请求 get 类型的 iq 后，响应的 result 类型 iq 的 ID 与 请求 iq 的 ID 相同
-     <query xmlns="jabber:iq:roster"/> 子标签，说明了客户端需要查询 roster
+    一个 IQ 请求：
+    <iq type="get"
+    　　from="xiaoming@example.com"
+    　　to="example.com"
+    　　id="1234567">
+    　　<query xmlns="jabber:iq:roster"/>
+    <iq />
+    
+    获取 roster 需要客户端发送 <iq /> 标签向 XMPP 服务器端查询
+    type 属性，说明了该 iq 的类型为 get，与 HTTP 类似，向服务器端请求信息
+    from 属性，消息来源，这里是你的 JID
+    to 属性，消息目标，这里是服务器域名
+    id 属性，标记该请求 ID，当服务器处理完毕请求 get 类型的 iq 后，响应的 result 类型 iq 的 ID 与 请求 iq 的 ID 相同
+    <query xmlns="jabber:iq:roster"/> 子标签，说明了客户端需要查询 roster
      */
+    
     NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:roster"];
     NSXMLElement *iq = [NSXMLElement elementWithName:@"iq"];
     XMPPJID *myJID = _xmppStream.myJID;
@@ -243,6 +252,8 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     }
     else
     {
+        //带内注册
+        //在注册里面调用enrollWithUserName: andPassword:
         [_connectDelegate anonymousConnected];
     }
 }
@@ -285,11 +296,15 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
         return;
     
     // block group chat system message
+    // message.from -> ty@conference.121.199.23.184/maibou888888
+    /*
+     <message xmlns="jabber:client" to="qwert2@121.199.23.184/ae9ccab1" type="groupchat" from="dfghds@conference.121.199.23.184/qwert2"><body>weewewewew</body><delay xmlns="urn:xmpp:delay" stamp="2016-07-29T15:08:43.028Z" from="qwert2@121.199.23.184/53674559"></delay><x xmlns="jabber:x:delay" stamp="20160729T15:08:43" from="qwert2@121.199.23.184/53674559"></x></message>
+     */
     if ([[[message attributeForName:@"type"] stringValue] isEqualToString:@"groupchat"] && [message.from isBare]) {
         return;
     }
     XMPPJID *fromJID = message.from;
-    NSString *from = [fromJID user];
+    NSString *from = [fromJID user];    //发消息的用户名称
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"body"];
@@ -304,7 +319,15 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
         chatJID = fromJID;
     }
     else if ([[[message attributeForName:@"type"] stringValue] isEqualToString:@"groupchat"]){
-        //群主聊天
+        //群聊天
+        /*
+         body = 121212121221122112;
+         chatType = groupchat;
+         from = qwert2;
+         isOutgoing = 1;
+         roomJID = "fwefwecdcdcscdcscds@conference.121.199.23.184";
+         timestamp = "2016-07-30 11:07:30 +0000";
+         */
         [dict setObject:@"groupchat" forKey:@"chatType"];
         [dict setObject:[fromJID resource] forKey:@"from"];
         [dict setObject:[fromJID bare] forKey:@"roomJID"];
@@ -349,6 +372,7 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
  
 */
 
+//接受好友请求
 - (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq
 {
     NSXMLElement *queryElement = [iq elementForName: @"query" xmlns: @"jabber:iq:roster"];
@@ -361,13 +385,18 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
                 XMPPJID *jid = [XMPPJID jidWithString:jidString];
                 [_xmppvCardTempModule fetchvCardTempForJID:jid];
                 XMPPvCardTemp *vCard = [_xmppvCardTempModule vCardTempForJID:jid shouldFetch:YES];
-                NSData *avatarData = vCard.photo;
-                NSString *userName = [jid user];
+        
                 NSMutableDictionary *mutableDict = [NSMutableDictionary dictionaryWithCapacity:4];
+                //头像
+                NSData *avatarData = vCard.photo;
                 if (avatarData) {
                     [mutableDict setObject:avatarData forKey:@"avatar"];
                 }
+                
+                //名称
+                NSString *userName = [jid user];
                 [mutableDict setObject:userName forKey:@"name"];
+                
                 NSDictionary *friendDict = [[NSDictionary alloc]initWithDictionary:mutableDict];
                 [_friendsDelegate friendsList:friendDict];
             }
@@ -384,6 +413,7 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
         NSString *requestRosterDefault = [NSString stringWithFormat:@"%@_requestRoster",myString];
         NSDictionary *requestRosterDict = @{@"from": [presence fromStr], @"to": [presence toStr]};
         
+        //保存是否同意列表（from to result:同意or不同意）
         if([[NSUserDefaults standardUserDefaults] objectForKey:requestRosterDefault]){
             NSMutableArray *array = [[[NSUserDefaults standardUserDefaults] objectForKey:requestRosterDefault] mutableCopy];
             [array insertObject:requestRosterDict atIndex:0];
@@ -402,7 +432,7 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
 
 #pragma mark - XMPPMUCDelegate
 
-- (void)xmppMUC:(XMPPMUC *)sender roomJID:(XMPPJID *) roomJID didReceiveInvitation:(XMPPMessage *)message
+- (void)xmppMUC:(XMPPMUC *)sender roomJID:(XMPPJID *)roomJID didReceiveInvitation:(XMPPMessage *)message
 {
     NSString *myString = [_xmppStream.myJID user];
     NSString *groupInviteDefault = [NSString stringWithFormat:@"%@_groupInvite",myString];
@@ -419,6 +449,11 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
     
     NSDictionary *groupInviteDict = @{@"from": whoInvite, @"room": roomName, @"reason": inviteMessage};
     
+    /*
+     from = "qwert2@121.199.23.184";
+     reason = "欢迎加入！";
+     room = tryu;
+     */
     if([[NSUserDefaults standardUserDefaults] objectForKey:groupInviteDefault]){
         NSMutableArray *array = [[[NSUserDefaults standardUserDefaults] objectForKey:groupInviteDefault] mutableCopy];
         [array insertObject:groupInviteDict atIndex:0];
@@ -430,14 +465,11 @@ BOOL isanonymousConnect = NO; //是不是匿名登录
         [[NSUserDefaults standardUserDefaults] setObject:array forKey:groupInviteDefault];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-
-
 }
 
 - (void)xmppMUC:(XMPPMUC *)sender roomJID:(XMPPJID *) roomJID didReceiveInvitationDecline:(XMPPMessage *)message
 {
     NSLog(@"didReceiveInvitationDecline");
 }
-
 
 @end

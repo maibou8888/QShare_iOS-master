@@ -30,8 +30,6 @@
 @property (nonatomic,strong) XMPPUtils *sharedXMPP;
 @property (nonatomic,strong) AVAudioPlayer *player;
 
-
-
 @end
 
 @implementation ChatVC
@@ -54,7 +52,6 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [self addKeyboardNotification];
-
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
@@ -62,10 +59,7 @@
     [self removeKeyboardNotification];
 }
 
-
-
 #pragma mark - Keyboard Notification
-
 - (void)addKeyboardNotification{
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShown:)
@@ -90,19 +84,14 @@
     CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     CGFloat keyboardHeight = keyboardSize.height;
     [self animateTextField:_messageTextField up:YES moveDistance:keyboardHeight];
-    
 }
 
 - (void)keyboardWillHidden:(NSNotification *)notification
 {
-    
-    
     [self animateTextField:_messageTextField up:NO moveDistance:0];
-    
 }
 
 #pragma mark - Setup
-
 - (void)setup
 {
     [XMPPUtils sharedInstance].messageDelegate = self;
@@ -137,6 +126,7 @@
 
 -(void)setupTapGestureRecognizer
 {
+    //滑动手势
     UIPanGestureRecognizer *tapGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(hideToolBar)];
     tapGesture.delegate = self;
     [_bubbleTable addGestureRecognizer:tapGesture];
@@ -197,6 +187,7 @@
             bubbleData = [NSBubbleData dataWithImage:image date:msgDate type:bubbleType];
         }
         else if ([body hasPrefix:@"photoBase64"]){
+            //photoBase64/9j/4AAQSkZJRgABAQAASABIAAD/4QBYRXhpZgAATU0AKgAAAAgA
             NSString *photoBase64Str = [body substringFromIndex:11];
             NSData *data = [photoBase64Str base64DecodedData];
             UIImage *image = [UIImage imageWithData:data];
@@ -309,9 +300,7 @@
     }
 }
 
-
 #pragma mark - Send Message
-
 - (IBAction)sendButton:(id)sender
 {
     //本地输入框中的信息
@@ -321,9 +310,7 @@
         
         [self sendWithType:@"text" andBody:message];
     }
-    
     self.messageTextField.text = @"";
-
 }
 
 - (IBAction)beginAudio:(id)sender {
@@ -341,7 +328,6 @@
         NSString *voiceBase64 = [data base64EncodedString];
         [self sendWithType:@"voice" andBody:voiceBase64];
     }
-    
 }
 
 - (IBAction)sendPhoto:(id)sender {
@@ -366,21 +352,14 @@
     [self animateTextField:_messageTextField up:YES moveDistance:64.0];
 
     _showMoreView.hidden = NO;
-
-
 }
-
-
 
 - (void)dismissImagePickerController
 {
-
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
-
 #pragma mark - QBImagePickerControllerDelegate
-
 - (void)imagePickerController:(QBImagePickerController *)imagePickerController didSelectAsset:(ALAsset *)asset
 {
     NSLog(@"*** imagePickerController:didSelectAsset:");
@@ -403,12 +382,10 @@
 
 - (void)imagePickerControllerDidCancel:(QBImagePickerController *)imagePickerController
 {
-    
     [self dismissImagePickerController];
 }
 
 #pragma mark - xmppMessageDelegate
-
 -(void)newMessageReceived:(NSDictionary *)messageCotent{
     
     if ([[messageCotent objectForKey:@"chatwith"] isEqualToString:_chatName]) {
@@ -424,10 +401,7 @@
         if ([_bubbleDataMessages count] > 1) {
             [self.bubbleTable scrollBubbleViewToBottomAnimated:YES];
         }
-
     }
-    
-
 }
 
 - (void)sendWithType:(NSString *)type andBody:(id)bodyObj
@@ -458,7 +432,7 @@
         [sendString appendString:(NSString *)bodyObj];
     }
     
-    
+    //<message type="chat" to="qwert5@121.199.23.184" from="qwert2@121.199.23.184"><body>333</body></message>
     [body setStringValue:sendString];
     [mes addChild:body];
     
@@ -469,7 +443,7 @@
     [messageDict setObject:sendString forKey:@"body"];
     [messageDict setObject:@(YES) forKey:@"isOutgoing"];
     [messageDict setObject:[NSDate dateWithTimeIntervalSinceNow:0] forKey:@"timestamp"];
-    
+
     NSBubbleData *bubdata = [self dictToBubbleData:messageDict];
     
     [_bubbleDataMessages addObject:bubdata];
@@ -489,8 +463,6 @@
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_CHAT_MSG object:notifiMessage];
-
-
 }
 
 #pragma mark - MyLocationDelegate
@@ -514,12 +486,7 @@
     [self animateTextField:_messageTextField up:NO moveDistance:0.0];
 }
 
-
-
 #pragma mark - UITextFieldDelegate methods
-
-
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [self sendButton:self];
@@ -528,7 +495,6 @@
 
 - (void)animateTextField:(UITextField *)textField up:(BOOL)dir moveDistance:(CGFloat)distance
 {
-
     CGFloat movementDistance = distance;
     CGFloat movementDuration = 0;
     CGRect viewFrame = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height);

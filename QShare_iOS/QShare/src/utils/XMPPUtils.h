@@ -12,6 +12,7 @@
 
 @optional
 
+
 - (void)didAuthenticate;
 - (void)didNotAuthenticate:(NSXMLElement *)error;
 - (void)anonymousConnected;

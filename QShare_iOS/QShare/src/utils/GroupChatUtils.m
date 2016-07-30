@@ -44,11 +44,7 @@
     [_room activate:[XMPPUtils sharedInstance].xmppStream];
     [_room addDelegate:self delegateQueue:dispatch_get_main_queue()];
     [_room joinRoomUsingNickname:[XMPPUtils sharedInstance].xmppStream.myJID.user history:nil];
-
-
 }
-
-
 
 - (void) sendMessageWithBody:(NSString *) messageBody andRoomJID:(XMPPJID *)roomJID
 {
@@ -72,12 +68,9 @@
         [_room sendMessageWithBody:messageBody];
 
     }
-    
-
 }
 
 #pragma mark XMPPRoomDelegate
-
 - (void)xmppRoomDidCreate:(XMPPRoom *)sender
 {
     NSLog(@"Create Room Success!");

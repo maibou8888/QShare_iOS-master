@@ -19,7 +19,7 @@
 @property (strong, nonatomic) IBOutlet UIBubbleTableView *bubbleTable;
 @property (strong, nonatomic) IBOutlet UITextField *messageTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *soundLoadingImageView;
-@property (weak, nonatomic) IBOutlet UIView *recordView;
+@property (weak, nonatomic) IBOutlet UIView *recordView;    //录音方形背景视图
 @property (weak, nonatomic) IBOutlet UIView *showMoreView;
 - (IBAction)sendButton:(id)sender;
 - (IBAction)beginAudio:(id)sender;

@@ -216,10 +216,6 @@
             if ([_bubbleMessages count] > 1) {
                 [self.bubbleTableView scrollBubbleViewToBottomAnimated:YES];
             }
-
-            
-
-            
         }
     }
 }
@@ -539,6 +535,7 @@
 }
 
 #pragma mark -UIGestureRecognizerDelegate
+//同时接收两个事件
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;

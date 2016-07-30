@@ -939,7 +939,6 @@
 			children = (
 				9531BF8818EB075400161897 /* controllers */,
 				9531BFF418EB075500161897 /* views */,
-				9531BF8918EB075400161897 /* models */,
 				9531BF8A18EB075400161897 /* thirdparty */,
 				9531BFF318EB075500161897 /* utils */,
 				9531BFF718EB075500161897 /* XPAppDelegate.h */,
@@ -958,13 +957,6 @@
 				9531C05A18ED54B600161897 /* login */,
 			);
 			path = controllers;
-			sourceTree = "<group>";
-		};
-		9531BF8918EB075400161897 /* models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = models;
 			sourceTree = "<group>";
 		};
 		9531BF8A18EB075400161897 /* thirdparty */ = {
@@ -2178,7 +2170,7 @@
 				ORGANIZATIONNAME = vic;
 				TargetAttributes = {
 					9531BEB318EAFF4900161897 = {
-						DevelopmentTeam = 6473SPM658;
+						DevelopmentTeam = 6A593UV88Z;
 					};
 					9531BED718EAFF4900161897 = {
 						TestTargetID = 9531BEB318EAFF4900161897;
@@ -2576,8 +2568,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing Jianong Online Information Technology Co.,Ltd. (6473SPM658)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Beijing Jianong Online Information Technology Co.,Ltd. (6473SPM658)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: LAN XIAN WISE FINANCE RURAL BANK co.,LTD (6A593UV88Z)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: LAN XIAN WISE FINANCE RURAL BANK co.,LTD (6A593UV88Z)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2595,7 +2587,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "d9da9e5d-9e02-47e0-98bf-b92c78839d0a";
+				PROVISIONING_PROFILE = "0bb22efc-8eb3-4ad7-9a4a-783fa7480367";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 armv7s";
 			};
@@ -2618,8 +2610,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing Jianong Online Information Technology Co.,Ltd. (6473SPM658)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Beijing Jianong Online Information Technology Co.,Ltd. (6473SPM658)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: LAN XIAN WISE FINANCE RURAL BANK co.,LTD (6A593UV88Z)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: LAN XIAN WISE FINANCE RURAL BANK co.,LTD (6A593UV88Z)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2630,7 +2622,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PROVISIONING_PROFILE = "d9da9e5d-9e02-47e0-98bf-b92c78839d0a";
+				PROVISIONING_PROFILE = "0bb22efc-8eb3-4ad7-9a4a-783fa7480367";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s";

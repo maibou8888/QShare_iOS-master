@@ -16,12 +16,10 @@
 
 @interface ChatMainVC ()<xmppConnectDelegate>
 
-
 @property(nonatomic,strong) XMPPUtils *sharedXMPP;
 @property(nonatomic,strong) NSMutableArray *chatArray;
 @property (nonatomic,strong) NSString *chatUserName;
 @property int msgNum;
-
 
 @end
 
@@ -43,12 +41,9 @@
     _chatArray = [NSMutableArray arrayWithCapacity:20];
     _sharedXMPP = [XMPPUtils sharedInstance];
     _sharedXMPP.connectDelegate = self;
+    
     [self setupLogin];
-    
     [self addNotify];
-    
-    
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -77,10 +72,13 @@
     NSString *pass = [userDefaults objectForKey:XMPP_USER_PASS];
     if(userName && pass)
     {
+        NSLog(@"*** chatMainVC present");
         [_sharedXMPP connect];
     }
-    else
+    else {
+        NSLog(@"*** loginVC present");
         [self performSegueWithIdentifier:SEGUE_CHAT_LOGIN sender:self];
+    }
     
     [QSUtils setExtraCellLineHidden:self.tableView];
 
@@ -100,6 +98,12 @@
 
 - (void)chatNotify:(NSNotification *)noti
 {
+    /*
+     body = "干你老师";
+     chatwith = qwert5;
+     isOutgoing = 0;
+     timestamp = "2016-07-29 14:51:19 +0000";
+     */
     NSMutableDictionary *chatDict = [noti object];
     BOOL isOutgoing = [[chatDict objectForKey:@"isOutgoing"] boolValue];
     BOOL isExist = NO;
@@ -107,6 +111,7 @@
     if (_chatArray) {
         for (NSMutableDictionary *obj in _chatArray) {
             if ([self isGroupChatType:chatDict]) {
+                //判断是不是群聊
                 if ([obj[@"chatType"] isEqualToString:@"groupchat"] && [obj[@"roomJID"] isEqualToString: chatDict[@"roomJID"]]) {
                     isExist = YES;
                     index = [_chatArray indexOfObject:obj];
@@ -137,6 +142,7 @@
     
     NSUInteger selectedIndex = [(UITabBarController *)self.parentViewController.parentViewController selectedIndex];
     if (!isOutgoing && (selectedIndex != 0)) {
+        //判断消息是不是别人发的消息
         [self.parentViewController.tabBarItem setBadgeValue:[NSString stringWithFormat:@"%d",++_msgNum]];
     }
     
@@ -202,6 +208,12 @@
         cell = [[chatListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
+    /*
+     body = "干你老师";
+     chatwith = qwert5;
+     isOutgoing = 0;
+     timestamp = "2016-07-29 14:51:19 +0000";
+     */
     NSDictionary *chatDict = [_chatArray objectAtIndex:indexPath.row];
     NSString *body = [chatDict objectForKey:@"body"];
     NSMutableString *bodyString = [NSMutableString stringWithCapacity:40];
